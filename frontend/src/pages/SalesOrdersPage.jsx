@@ -7,7 +7,7 @@ function formatMoney(amount) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(Number(amount));
 }
 
-export default function SalesOrdersPage() {
+export default function SalesOrdersPage({ view = "all" }) {
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [inventory, setInventory] = useState([]);
@@ -77,14 +77,17 @@ export default function SalesOrdersPage() {
 
   if (loading) return <Loading />;
   const stockByProduct = new Map(inventory.map((row) => [row.productId, row]));
+  const visibleOrders = view === "dispatch"
+    ? orders.filter((order) => order.status === "CONFIRMED")
+    : orders;
 
   return (
     <div className="page-grid">
       <section className="card table-card">
-        <div className="section-heading"><div><p className="eyebrow">ORDER MANAGEMENT</p><h2>Sales orders</h2></div></div>
+        <div className="section-heading"><div><p className="eyebrow">{view === "dispatch" ? "DISPATCH" : "ORDER MANAGEMENT"}</p><h2>{view === "dispatch" ? "Orders ready for dispatch" : "Sales orders"}</h2></div></div>
         <Feedback error={error} success={success} />
-        {!orders.length ? <EmptyState>No Sales Orders yet. Convert an accepted quotation first.</EmptyState> : (
-          <div className="order-list">{orders.map((order) => (
+        {!visibleOrders.length ? <EmptyState>{view === "dispatch" ? "No confirmed Sales Orders are ready for dispatch." : "No Sales Orders yet. Convert an accepted quotation first."}</EmptyState> : (
+          <div className="order-list">{visibleOrders.map((order) => (
             <article className="order-card" key={order.id}>
               <div className="order-topline">
                 <div>
@@ -108,12 +111,12 @@ export default function SalesOrdersPage() {
                   </tr>;
                 })}</tbody>
               </table></div>
-              {user.role === "ADMIN" && order.status === "PENDING" && (
+              {user.role === "ADMIN" && view !== "dispatch" && order.status === "PENDING" && (
                 <button disabled={busyId === order.id} onClick={() => confirm(order)}>
-                  {busyId === order.id ? "Confirming..." : "Confirm and reserve stock"}
+                  {busyId === order.id ? "Confirming..." : "Confirm Order"}
                 </button>
               )}
-              {user.role === "ADMIN" && order.status === "CONFIRMED" && (
+              {user.role === "ADMIN" && (view === "dispatch" || view === "all") && order.status === "CONFIRMED" && (
                 <div className="dispatch-panel">
                   <label>Vehicle number
                     <input
@@ -139,7 +142,7 @@ export default function SalesOrdersPage() {
                     disabled={busyId === order.id || !(dispatchForm[order.id] || {}).vehicleNumber || !(dispatchForm[order.id] || {}).driverName}
                     onClick={() => dispatch(order)}
                   >
-                    {busyId === order.id ? "Dispatching..." : "Dispatch full order"}
+                    {busyId === order.id ? "Dispatching..." : "Dispatch"}
                   </button>
                 </div>
               )}

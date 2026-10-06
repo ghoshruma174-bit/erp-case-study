@@ -29,13 +29,18 @@ export default function InventoryPage() {
   useEffect(() => { load(); }, []);
 
   async function update(record) {
+    const physicalQuantity = Number(quantities[record.productId]);
+    if (!Number.isInteger(physicalQuantity) || physicalQuantity < record.reservedQuantity) {
+      setError(`Physical quantity must be an integer at least equal to reserved stock (${record.reservedQuantity}).`);
+      return;
+    }
     setBusyId(record.productId);
     setError("");
     setSuccess("");
     try {
       await apiRequest(`/inventory/${record.productId}`, {
         method: "PATCH",
-        body: JSON.stringify({ physicalQuantity: Number(quantities[record.productId]) })
+        body: JSON.stringify({ physicalQuantity })
       });
       await load();
       setSuccess(`Stock updated for ${record.product.productCode}.`);
@@ -54,10 +59,12 @@ export default function InventoryPage() {
       <Feedback error={error} success={success} />
       {!inventory.length ? <EmptyState>No inventory records.</EmptyState> : (
         <div className="table-scroll"><table>
-          <thead><tr><th>Product</th><th>Physical</th><th>Reserved</th><th>Available</th>{user.role === "ADMIN" && <th>Adjust physical</th>}</tr></thead>
+          <thead><tr><th>Product code</th><th>Product name</th><th>Category</th><th>Physical quantity</th><th>Reserved quantity</th><th>Available quantity</th>{user.role === "ADMIN" && <th>Adjust physical</th>}</tr></thead>
           <tbody>{inventory.map((record) => (
             <tr key={record.id}>
-              <td>{record.product.productCode} — {record.product.productName}</td>
+              <td className="mono">{record.product.productCode}</td>
+              <td>{record.product.productName}</td>
+              <td>{record.product.category}</td>
               <td>{record.physicalQuantity}</td>
               <td>{record.reservedQuantity}</td>
               <td><strong>{record.availableQuantity}</strong></td>
@@ -67,10 +74,18 @@ export default function InventoryPage() {
                     aria-label={`Physical quantity for ${record.product.productCode}`}
                     type="number"
                     min={record.reservedQuantity}
+                    step="1"
+                    required
                     value={quantities[record.productId] ?? ""}
                     onChange={(event) => setQuantities((current) => ({ ...current, [record.productId]: event.target.value }))}
                   />
-                  <button className="button-small" disabled={busyId === record.productId} onClick={() => update(record)}>Save</button>
+                  <button
+                    className="button-small"
+                    disabled={busyId === record.productId || String(quantities[record.productId] ?? "").trim() === "" || !Number.isInteger(Number(quantities[record.productId])) || Number(quantities[record.productId]) < record.reservedQuantity}
+                    onClick={() => update(record)}
+                  >
+                    Save
+                  </button>
                 </div>
               </td>}
             </tr>

@@ -75,6 +75,10 @@ h3 { margin: 6px 0 4px; font-size: 1.1rem; }
 .page-grid { display: grid; gap: 20px; }
 .card { border: 1px solid var(--line); border-radius: 11px; background: #fff; padding: clamp(17px, 2.5vw, 25px); box-shadow: 0 6px 20px #14283b08; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.stat-card { display: grid; gap: 12px; border: 1px solid var(--line); border-radius: 9px; background: #f9fbfc; padding: 17px; }
+.stat-card span { color: var(--muted); font-size: .85rem; font-weight: 600; }
+.stat-card strong { color: var(--navy); font-size: 1.7rem; }
 .stack { display: grid; gap: 16px; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: end; }
 .form-grid > button { justify-self: start; }
@@ -109,11 +113,15 @@ tbody tr:last-child td { border-bottom: 0; }
 .inline-form { display: flex; gap: 6px; min-width: 140px; }
 .inline-form input { min-width: 75px; }
 .login-shell { min-height: 100vh; display: grid; place-items: center; padding: 20px; background: linear-gradient(145deg, #e7eef4, #f6f8fa 55%); }
+.login-shell.admin-login { background: linear-gradient(145deg, #e9eaf0, #f7f7fa 55%); }
+.admin-login .login-card { border-top: 4px solid #59627d; }
+.sales-login .login-card { border-top: 4px solid #1769aa; }
 .login-card { width: min(420px, 100%); border: 1px solid var(--line); border-radius: 13px; background: white; padding: 32px; box-shadow: 0 20px 60px #102b4615; }
 .login-card h1 { margin-bottom: 9px; }
 .login-card form { margin-top: 25px; }
 .login-card > .muted { line-height: 1.5; }
-.login-hint { margin: 20px 0 0; color: var(--muted); font-size: .74rem; }
+.portal-switch { margin: 22px 0 0; color: var(--muted); font-size: .84rem; text-align: center; }
+.portal-switch a { color: var(--blue); font-weight: 700; }
 
 @media (max-width: 850px) {
   .topbar { flex-wrap: wrap; gap: 9px 14px; }
@@ -129,6 +137,8 @@ tbody tr:last-child td { border-bottom: 0; }
   .content { padding: 22px 12px 38px; }
   .page-title { display: block; }
   .form-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat-card { padding: 13px; }
   .dispatch-panel { grid-template-columns: 1fr; }
   .order-topline { flex-direction: column; }
   .order-summary { justify-items: start; }

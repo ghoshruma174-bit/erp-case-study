@@ -132,7 +132,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. To create a production bundle, run `npm run build` from the frontend directory.
+Open `http://localhost:5173/sales/login` for the Sales sign-in or `http://localhost:5173/admin/login` for the Admin sign-in. Each account opens its own role-specific dashboard. To create a production bundle, run `npm run build` from the frontend directory.
 
 ## Demo accounts
 
@@ -147,11 +147,11 @@ Passwords are stored as bcrypt hashes. Change these demo credentials before usin
 
 ## Five-minute demo
 
-1. Sign in as `sales@example.com`.
+1. Open `/sales/login` and sign in as `sales@example.com`; the Sales dashboard is the landing page.
 2. Create a customer and a multi-product enquiry.
 3. Create a draft quotation, mark it sent, then accept it.
 4. Convert the accepted quotation to a Sales Order.
-5. Sign out and sign in as `admin@example.com`.
+5. Sign out, open `/admin/login`, and sign in as `admin@example.com`; the Admin dashboard is the landing page.
 6. Open Sales Orders and confirm the order; stock becomes reserved while physical stock stays unchanged.
 7. Enter vehicle and driver details and dispatch the order.
 8. Confirm the order is `DISPATCHED`; physical and reserved stock have both decreased by the dispatched quantity.

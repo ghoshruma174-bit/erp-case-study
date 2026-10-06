@@ -27,14 +27,19 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener("erp:unauthorized", clearSession);
   }, []);
 
-  async function login(email, password) {
+  async function login(email, password, expectedRole) {
     const result = await apiRequest("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password })
     });
+    if (result.user.role !== expectedRole) {
+      const portalName = expectedRole === "ADMIN" ? "Admin" : "Sales";
+      throw new Error(`This account does not have access to the ${portalName} portal.`);
+    }
     sessionStorage.setItem("erp-token", result.token);
     sessionStorage.setItem("erp-user", JSON.stringify(result.user));
     setUser(result.user);
+    window.history.replaceState({}, "", expectedRole === "ADMIN" ? "/admin/dashboard" : "/sales/dashboard");
   }
 
   function logout() {
